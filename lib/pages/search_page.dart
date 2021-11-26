@@ -279,8 +279,10 @@ class _SearchPageState extends State<SearchPage> {
   Future<void> searchWithImage() async {
     showProgress(true);
     String url  = await getProfilePicUploadUrl();
+    var description = await CloudClient().searchForItem(searchText);
 
   }
 
 }
+
 

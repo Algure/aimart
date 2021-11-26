@@ -36,25 +36,25 @@ class CloudClient{
     return martList;
   }
 
-  dynamic describeImage(String imageUrl){
+  dynamic describeImage(String imageUrl) async {
     var headers = {
       'Ocp-Apim-Subscription-Key': VISIONKEY,
       'Content-Type': 'application/json'
     };
-    var request = http.Request('POST', Uri.parse('https://aimartvision.cognitiveservices.azure.com/vision/v3.2/describe'));
+    var request = Request('POST', Uri.parse(VISION_DOMAIN + 'vision/v3.2/describe'));
     request.body = json.encode({
-      "url": "https://images-na.ssl-images-amazon.com/images/I/81yBu9k41yL.__AC_SX300_SY300_QL70_FMwebp_.jpg"
+      "url": imageUrl
     });
     request.headers.addAll(headers);
 
-    http.StreamedResponse response = await request.send();
+    StreamedResponse response = await request.send();
 
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
-    }
-    else {
-    print(response.reasonPhrase);
-    }
+    String result = await response.stream.bytesToString();
+    print ('describeImage: ${response.statusCode},  result: $result,');
 
+    if (response.statusCode >= 400) {
+      throw Exception(result);
+    }
+    return jsonDecode(result);
   }
 }
