@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:aimart/data_objects/mart_item.dart';
 import 'package:aimart/utilities/constants.dart';
 import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 class CloudClient{
   CloudClient._privateConstructor();
@@ -36,25 +37,34 @@ class CloudClient{
     return martList;
   }
 
-  dynamic describeImage(String imageUrl) async {
-    var headers = {
-      'Ocp-Apim-Subscription-Key': VISIONKEY,
-      'Content-Type': 'application/json'
-    };
-    var request = Request('POST', Uri.parse(VISION_DOMAIN + 'vision/v3.2/describe'));
-    request.body = json.encode({
-      "url": imageUrl
-    });
-    request.headers.addAll(headers);
+   describeImage(String imageUrl) async {
 
-    StreamedResponse response = await request.send();
+     var headers = {
+       'api-key': APIKEY
+     };
+     var request = Request('GET', Uri.parse(SEARCH_DOMAIN+'/docs?api-version=2020-06-30-Preview&search=*'));
 
-    String result = await response.stream.bytesToString();
-    print ('describeImage: ${response.statusCode},  result: $result,');
+     request.headers.addAll(headers);
 
-    if (response.statusCode >= 400) {
-      throw Exception(result);
-    }
-    return jsonDecode(result);
+     StreamedResponse response = await request.send();
+
+     String result = await response.stream.bytesToString();
+     print ('describeImage: ${response.statusCode},  result: $result,');
+     return result;
+     // var request = http.Request('GET',
+    //     Uri.parse(FLASK_HOME));//?url=$imageUrl'));
+    // var request = http.Request('GET', Uri.parse(SEARCH_DOMAIN+'/docs?api-version=2020-06-30-Preview&search=*'));
+    //
+    // print('FLASK_HOME: ' + FLASK_HOME);
+    //
+    // StreamedResponse response = await request.send();
+    //
+    // String result = await response.stream.bytesToString();
+    // print ('describeImage: ${response.statusCode},  result: $result,');
+    //
+    // if (response.statusCode >= 400) {
+    //   throw Exception(result);
+    // }
+    // return jsonDecode(result);
   }
 }

@@ -48,7 +48,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text('AiMart', style: TextStyle(color: THEME_COLOR, fontSize: 18),),
+        title: Text('AiMart', style: TextStyle(color: THEME_COLOR, fontWeight: FontWeight.bold ,fontSize: 18),),
         actions: [
           SizedBox(width: 20,),
           GestureDetector(
@@ -272,7 +272,7 @@ class _SearchPageState extends State<SearchPage> {
   Future<void> searchWithImage() async {
     showProgress(true);
     String url  = await getProfilePicUploadUrl();
-    var description = await CloudClient().describeImage(url);
+    Map description = await CloudClient().describeImage(url);
 
     martSet = new HashSet<MartItem>();
     List<MartItem> martList = [];
