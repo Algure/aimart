@@ -43,7 +43,9 @@ class _MarketPageState extends State<MarketPage> {
           GestureDetector(
               onTap: (){Navigator.pushNamed(context, '/search');},
               child: Icon(Icons.search, color: THEME_COLOR,)),
+
           SizedBox(width: 20,),
+
           GestureDetector(
               onTap: resetMartList,
               child: Icon(Icons.refresh, color: THEME_COLOR,)),
@@ -56,7 +58,7 @@ class _MarketPageState extends State<MarketPage> {
           Container(
           height: double.maxFinite,
           width: double.maxFinite,
-          child: MediaQuery.of(context).size.width>=800?
+          child: MediaQuery.of(context).size.width>=1000?
           GridView(
               padding: EdgeInsets.all(10),
               children:aiWidgetsList,
@@ -66,7 +68,7 @@ class _MarketPageState extends State<MarketPage> {
                   crossAxisCount: 2,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
-                  childAspectRatio: 5
+                  childAspectRatio: 2
               )
           ):
           SingleChildScrollView(
@@ -102,6 +104,7 @@ class _MarketPageState extends State<MarketPage> {
     }catch(e,t){
       uShowErrorNotification('An error occured. Drag to refresh.');
     }
+    progress = false;
     if(mounted)  showProgress(false);
   }
 

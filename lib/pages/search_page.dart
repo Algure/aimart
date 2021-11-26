@@ -13,7 +13,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class SearchPage extends StatefulWidget {
 
@@ -26,7 +25,6 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
 
   List<Widget> aiWidgetsList = [];
-  RefreshController _rController= RefreshController(initialRefresh: false);
   String searchText = '';
 
   bool progress = false;
@@ -81,12 +79,13 @@ class _SearchPageState extends State<SearchPage> {
                         margin: EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(15)),
-                          color: picUrl.isEmpty? Colors.grey : THEME_COLOR
+                          color: (picUrl.isEmpty && tempFile == null)? Colors.grey : THEME_COLOR
                         ),
                         alignment: Alignment.center,
                         child: Text('Search', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15),),
                       ),
                     ),
+                    SizedBox(height: 30,),
                     Expanded(
                       child: Container(
                         child: MediaQuery.of(context).size.width>=800?
@@ -99,7 +98,7 @@ class _SearchPageState extends State<SearchPage> {
                                 crossAxisCount: 2,
                                 mainAxisSpacing: 10,
                                 crossAxisSpacing: 10,
-                                childAspectRatio: 5
+                                childAspectRatio: 2
                             )
                         ):
                         SingleChildScrollView(
@@ -147,8 +146,7 @@ class _SearchPageState extends State<SearchPage> {
 
   void showProgress(bool bool) {
     setState(() {
-      if(!bool)  _rController.refreshCompleted();
-      else _rController.requestRefresh();
+     progress = bool;
     });
   }
 
@@ -192,7 +190,7 @@ class _SearchPageState extends State<SearchPage> {
   _getImageWidget( ){
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    height *= 0.2;
+    height *= 0.3;
     width *= 0.5;
     var boxFitOption = BoxFit.cover;
     var profilePic = this.picUrl;
@@ -207,7 +205,7 @@ class _SearchPageState extends State<SearchPage> {
                 width: width,
                 height: height,
                 child: ClipRRect(borderRadius: BorderRadius.all(Radius.circular(10)),
-                  child: Image.network(tempFile!.path, fit: BoxFit.cover,),)
+                  child: Image.network(tempFile!.path, fit: BoxFit.scaleDown,),)
             ),
           );
       }else{
@@ -218,7 +216,7 @@ class _SearchPageState extends State<SearchPage> {
                 width: width,
                 height: height,
                 child: ClipRRect(borderRadius: BorderRadius.all(Radius.circular(10)),
-                  child: Image.file(File(tempFile!.path), fit: BoxFit.cover,),)
+                  child: Image.file(File(tempFile!.path), fit: BoxFit.scaleDown,),)
             ),
           );
       }
@@ -232,7 +230,7 @@ class _SearchPageState extends State<SearchPage> {
               color: Colors.white,
             ),
             child: ClipRRect(borderRadius: BorderRadius.all(Radius.circular(10)),
-              child: Image.network(profilePic, fit: BoxFit.cover),)
+              child: Image.network(profilePic, fit: BoxFit.scaleDown),)
         ),
       );
     }else{
@@ -247,7 +245,7 @@ class _SearchPageState extends State<SearchPage> {
                 borderRadius: BorderRadius.all(Radius.circular(10))
             ),
             padding: EdgeInsets.only(top:10),
-            child: Center(child: Image.asset('images/imagepick.png', height: height *0.3,))
+            child: Center(child: Icon(Icons.image, color: THEME_COLOR, size: 50,))
         ),
       );
     }
