@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -28,18 +29,18 @@ class _SearchPageState extends State<SearchPage> {
   RefreshController _rController= RefreshController(initialRefresh: false);
   String searchText = '';
 
+  bool progress = false;
   bool searchMode = false;
-
   final picker= ImagePicker();
   String picUrl = '';
 
   PickedFile? tempFile;
 
-  bool progress = false;
+  Set<MartItem> martSet = new HashSet<MartItem>();
 
   @override
   void initState() {
-    resetMartList();
+
   }
 
   @override
@@ -135,15 +136,9 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   resetMartList() async {
-    if(mounted) _setSearchMode(false);
     if(mounted) showProgress(true);
     try {
-      List<MartItem> proList = await CloudClient().searchForItem('*');
       aiWidgetsList = [];
-      for (MartItem pro in proList) {
-        if (pro == null) continue;
-        aiWidgetsList.add(MartListItem(martItem: pro));
-      }
     }catch(e,t){
       uShowErrorNotification('An error occured.');
     }
@@ -279,8 +274,21 @@ class _SearchPageState extends State<SearchPage> {
   Future<void> searchWithImage() async {
     showProgress(true);
     String url  = await getProfilePicUploadUrl();
-    var description = await CloudClient().searchForItem(searchText);
+    var description = await CloudClient().describeImage(url);
 
+    martSet = new HashSet<MartItem>();
+    List<MartItem> martList = [];
+    // : Extract tags.
+    for (String tag in description['description']['tags']){
+      martList = await CloudClient().searchForItem(tag);
+      martSet.addAll(martList);
+    }
+    for (MartItem pro in martSet) {
+      if (pro == null) continue;
+      aiWidgetsList.add(MartListItem(martItem: pro));
+    }
+    //: Search through database with tags
+    showProgress(false);
   }
 
 }

@@ -21,8 +21,9 @@ class _MarketPageState extends State<MarketPage> {
   List<Widget> aiWidgetsList = [];
   RefreshController _rController= RefreshController(initialRefresh: false);
   String searchText = '';
-
   bool searchMode = false;
+
+  bool progress = true;
 
   @override
   void initState() {
@@ -36,8 +37,12 @@ class _MarketPageState extends State<MarketPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text('AiMart', style: TextStyle(color: THEME_COLOR, fontSize: 18),),
+        title: Text('AiMart', style: TextStyle(color: THEME_COLOR, fontWeight: FontWeight.bold, fontSize: 18),),
         actions: [
+          SizedBox(width: 20,),
+          GestureDetector(
+              onTap: (){Navigator.pushNamed(context, '/search');},
+              child: Icon(Icons.search, color: THEME_COLOR,)),
           SizedBox(width: 20,),
           GestureDetector(
               onTap: resetMartList,
@@ -45,30 +50,42 @@ class _MarketPageState extends State<MarketPage> {
           SizedBox(width: 20,)
         ],
       ),
-      body:  SmartRefresher(
-        controller: _rController,
-        onRefresh: resetMartList,
-        child: MediaQuery.of(context).size.width>=800?
-        GridView(
-            padding: EdgeInsets.all(10),
-            children:aiWidgetsList,
-            // semanticChildCount: proWidgets.l,
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 5
-            )
-        ):
-        SingleChildScrollView(
-          child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: aiWidgetsList
+      body:  Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+          height: double.maxFinite,
+          width: double.maxFinite,
+          child: MediaQuery.of(context).size.width>=800?
+          GridView(
+              padding: EdgeInsets.all(10),
+              children:aiWidgetsList,
+              // semanticChildCount: proWidgets.l,
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 5
+              )
+          ):
+          SingleChildScrollView(
+            child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: aiWidgetsList
+            ),
           ),
         ),
-      ),
+
+          if(progress)
+          Container(
+            height: 150,
+            width: 150,
+            child: CircularProgressIndicator(color: THEME_COLOR,),
+          )
+        ]
+      )
     );
   }
 
@@ -90,8 +107,7 @@ class _MarketPageState extends State<MarketPage> {
 
   void showProgress(bool bool) {
     setState(() {
-      if(!bool)  _rController.refreshCompleted();
-      else _rController.requestRefresh();
+      progress = false;
     });
   }
 
