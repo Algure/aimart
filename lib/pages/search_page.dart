@@ -46,104 +46,138 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text('AiMart', style: TextStyle(color: THEME_COLOR, fontWeight: FontWeight.bold ,fontSize: 18),),
-        actions: [
-          SizedBox(width: 20,),
-          GestureDetector(
-              onTap: resetMartList,
-              child: Icon(Icons.refresh, color: THEME_COLOR,)),
-          SizedBox(width: 20,)
-        ],
-      ),
-      body:  Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              height: double.maxFinite,
-              width: double.maxFinite,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _getImageWidget(),
-                    GestureDetector(
-                      onTap: (){
-                        searchWithImage();
-                      },
-                      child: Container(
-                        constraints: BoxConstraints(
-                          maxHeight: 50,
-                          maxWidth: 250,
-                        ),
-                        margin: EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          color: (picUrl.isEmpty && tempFile == null)? Colors.grey : THEME_COLOR
-                        ),
-                        alignment: Alignment.center,
-                        child: Text('Search', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15),),
+      body:  NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: MediaQuery.of(context).size.height*0.5,
+              floating: false,
+              pinned: true,
+              iconTheme: IconThemeData(
+                  color: Colors.white),
+              actionsIconTheme: IconThemeData(
+                  color: Colors.white),
+              backgroundColor: Colors.white,
+
+              flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(width: 20,),
+                        // Text('AiMart', style: TextStyle(color: THEME_COLOR, fontWeight: FontWeight.bold ,fontSize: 18),),
+                        Spacer(),
+                        GestureDetector(
+                            onTap: resetMartList,
+                            child: Icon(Icons.refresh, color: THEME_COLOR,)),
+                        SizedBox(width: 20,)
+                      ]
+                  ),
+                  background: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          image: DecorationImage(fit:BoxFit.cover,
+                              image: AssetImage('images/objects.png'))
                       ),
-                    ),
-                    SizedBox(height: 20,),
-                    Container(
-                      height: 40,
-                      child: SingleChildScrollView(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            for(String tag in detectedTags)
-                              Container(
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.all(8),
-                                margin: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
+                      padding: EdgeInsets.all(10),
+                      alignment: Alignment.center,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _getImageWidget(),
+                          GestureDetector(
+                            onTap: (){
+                              searchWithImage();
+                            },
+                            child: Container(
+                              constraints: BoxConstraints(
+                                maxHeight: 50,
+                                maxWidth: 250,
+                              ),
+                              margin: EdgeInsets.all(15),
+                              decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(Radius.circular(15)),
-                                  color: THEME_COLOR
-                                ),
-                                child: Text(tag, style: TextStyle(color: Colors.white, fontSize: 13),),
-                              )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20,),
-                    if(progress)
+                                  color: (picUrl.isEmpty && tempFile == null)? Colors.grey : THEME_COLOR
+                              ),
+                              alignment: Alignment.center,
+                              child: Text('Search', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15),),
+                            ),
+                          ),
+                        ],
+                      )
+              ),
+              ))
+          ];
+        },
+        body: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                height: double.maxFinite,
+                width: double.maxFinite,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 8,),
                       Container(
-                        height: 150,
-                        width: 150,
-                        child: CircularProgressIndicator(color: THEME_COLOR,),
-                      ),
-                    SizedBox(height: 10,),
-                    Expanded(
-                      child: Container(
-                        child: MediaQuery.of(context).size.width>=800?
-                        GridView(
-                            padding: EdgeInsets.all(10),
-                            children:aiWidgetsList,
-                            // semanticChildCount: proWidgets.l,
-                            shrinkWrap: true,
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 10,
-                                crossAxisSpacing: 10,
-                                childAspectRatio: 2
-                            )
-                        ):
-                        SingleChildScrollView(
-                          child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: aiWidgetsList
+                        height: 50,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              for(String tag in detectedTags)
+                                Container(
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.all(8),
+                                  margin: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                                    color: THEME_COLOR
+                                  ),
+                                  child: Text(tag, style: TextStyle(color: Colors.white, fontSize: 13),),
+                                )
+                            ],
                           ),
                         ),
                       ),
-                    ),]
+                      SizedBox(height: 10,),
+                      if(progress)
+                        Container(
+                          height: 150,
+                          width: 150,
+                          child: CircularProgressIndicator(color: THEME_COLOR,),
+                        ),
+                      Expanded(
+                        child: Container(
+                          child: MediaQuery.of(context).size.width>=800?
+                          GridView(
+                              padding: EdgeInsets.all(10),
+                              children:aiWidgetsList,
+                              // semanticChildCount: proWidgets.l,
+                              shrinkWrap: true,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 10,
+                                  crossAxisSpacing: 10,
+                                  childAspectRatio: 2
+                              )
+                          ):
+                          SingleChildScrollView(
+                            child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: aiWidgetsList
+                            ),
+                          ),
+                        ),
+                      ),]
+                ),
               ),
-            ),
 
-          ]
+            ]
+        ),
       ),
     );
   }
@@ -168,6 +202,10 @@ class _SearchPageState extends State<SearchPage> {
     if(mounted) showProgress(true);
     try {
       aiWidgetsList = [];
+      detectedTags = [];
+      martSet = {};
+      tempFile = null;
+      picUrl = '';
     }catch(e,t){
       uShowErrorNotification('An error occured.');
     }
@@ -221,8 +259,8 @@ class _SearchPageState extends State<SearchPage> {
   _getImageWidget( ){
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    height *= 0.3;
-    width *= 0.5;
+    height *= 0.2;
+    width *= 0.3;
     var boxFitOption = BoxFit.cover;
     var profilePic = this.picUrl;
     profilePic = profilePic.trim();
@@ -304,9 +342,9 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> searchWithImage() async {
     showProgress(true);
-    String url  = await getProfilePicUploadUrl();
-    print('image url: $url');
-    Map description = await CloudClient().describeImage(url);
+     picUrl  = await getProfilePicUploadUrl();
+    print('image url: $picUrl');
+    Map description = await CloudClient().describeImage(picUrl);
 
     martSet = new HashSet<MartItem>();
     List<MartItem> martList = [];
