@@ -45,7 +45,7 @@ class  MartListItem extends StatelessWidget {
                     children: [
                       Container(
                         constraints:BoxConstraints(
-                          maxWidth: 200
+                            maxWidth: MediaQuery.of(context).size.width < 500? 150 : 200
                         ),
                         child: Text(martItem.name??'',
                           maxLines: 3,
