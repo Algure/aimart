@@ -39,32 +39,20 @@ class CloudClient{
 
    describeImage(String imageUrl) async {
 
-     var headers = {
-       'api-key': APIKEY
-     };
-     var request = Request('GET', Uri.parse(SEARCH_DOMAIN+'/docs?api-version=2020-06-30-Preview&search=*'));
+     var request = http.Request('GET',
+        Uri.parse(FLASK_HOME+'analyse?url=$imageUrl'));
 
-     request.headers.addAll(headers);
+    print('FLASK_HOME: ' + FLASK_HOME);
 
-     StreamedResponse response = await request.send();
+    StreamedResponse response = await request.send();
 
-     String result = await response.stream.bytesToString();
-     print ('describeImage: ${response.statusCode},  result: $result,');
-     return result;
-     // var request = http.Request('GET',
-    //     Uri.parse(FLASK_HOME));//?url=$imageUrl'));
-    // var request = http.Request('GET', Uri.parse(SEARCH_DOMAIN+'/docs?api-version=2020-06-30-Preview&search=*'));
-    //
-    // print('FLASK_HOME: ' + FLASK_HOME);
-    //
-    // StreamedResponse response = await request.send();
-    //
-    // String result = await response.stream.bytesToString();
-    // print ('describeImage: ${response.statusCode},  result: $result,');
-    //
-    // if (response.statusCode >= 400) {
-    //   throw Exception(result);
-    // }
-    // return jsonDecode(result);
+    String result = await response.stream.bytesToString();
+    print ('describeImage: ${response.statusCode},  result: $result,');
+
+    if (response.statusCode >= 400) {
+      throw Exception(result);
+    }
+    return jsonDecode(result);
   }
+
 }

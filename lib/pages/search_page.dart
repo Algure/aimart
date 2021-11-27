@@ -35,6 +35,7 @@ class _SearchPageState extends State<SearchPage> {
   PickedFile? tempFile;
 
   Set<MartItem> martSet = new HashSet<MartItem>();
+  List<String> detectedTags = [];
 
   @override
   void initState() {
@@ -85,7 +86,36 @@ class _SearchPageState extends State<SearchPage> {
                         child: Text('Search', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 15),),
                       ),
                     ),
-                    SizedBox(height: 30,),
+                    SizedBox(height: 20,),
+                    Container(
+                      height: 40,
+                      child: SingleChildScrollView(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            for(String tag in detectedTags)
+                              Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.all(8),
+                                margin: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                                  color: THEME_COLOR
+                                ),
+                                child: Text(tag, style: TextStyle(color: Colors.white, fontSize: 13),),
+                              )
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20,),
+                    if(progress)
+                      Container(
+                        height: 150,
+                        width: 150,
+                        child: CircularProgressIndicator(color: THEME_COLOR,),
+                      ),
+                    SizedBox(height: 10,),
                     Expanded(
                       child: Container(
                         child: MediaQuery.of(context).size.width>=800?
@@ -112,12 +142,7 @@ class _SearchPageState extends State<SearchPage> {
                     ),]
               ),
             ),
-            if(progress)
-              Container(
-                height: 150,
-                width: 150,
-                child: CircularProgressIndicator(color: THEME_COLOR,),
-              )
+
           ]
       ),
     );
@@ -125,11 +150,16 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> searchForItem() async {
     setProgress(true);
-    List<MartItem> proList = await CloudClient().searchForItem(searchText);
-    aiWidgetsList = [];
-    for (MartItem pro in proList) {
-      if (pro == null) continue;
-      aiWidgetsList.add(MartListItem(martItem: pro));
+    try {
+      List<MartItem> proList = await CloudClient().searchForItem(searchText);
+      aiWidgetsList = [];
+      for (MartItem pro in proList) {
+        if (pro == null) continue;
+        aiWidgetsList.add(MartListItem(martItem: pro));
+      }
+    }catch(e,t){
+      uShowErrorNotification('An error occured');
+      print('eRROR: $e');
     }
     setProgress(false);
   }
@@ -183,6 +213,7 @@ class _SearchPageState extends State<SearchPage> {
       contentType: 'image/png',
     );
     tempFile = null;
+
 
     return MEDIA_DOMAIN + '/aimart/$picName.png';
   }
@@ -255,6 +286,8 @@ class _SearchPageState extends State<SearchPage> {
     try {
       // setProgress(true);
       tempFile = await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+      detectedTags = [];
+      aiWidgetsList = [];
       setProgress(false);
     }catch(e, t){
       uShowErrorNotification('No Image selected !');
@@ -272,13 +305,15 @@ class _SearchPageState extends State<SearchPage> {
   Future<void> searchWithImage() async {
     showProgress(true);
     String url  = await getProfilePicUploadUrl();
+    print('image url: $url');
     Map description = await CloudClient().describeImage(url);
 
     martSet = new HashSet<MartItem>();
     List<MartItem> martList = [];
-    // : Extract tags.
-    for (String tag in description['description']['tags']){
-      martList = await CloudClient().searchForItem(tag);
+    detectedTags = [];
+    for (var tag in description['tags']){
+      detectedTags.add(tag['name']);
+      martList = await CloudClient().searchForItem(tag['name']);
       martSet.addAll(martList);
     }
     for (MartItem pro in martSet) {
