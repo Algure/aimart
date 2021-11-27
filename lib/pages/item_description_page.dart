@@ -30,7 +30,8 @@ class _ItemDescriptionPageState extends State<ItemDescriptionPage> {
                 maxWidth: 400
               ),
               child: ClipRRect(
-                child: Image.network(widget.item.picUrl??'', fit: BoxFit.scaleDown, height: double.maxFinite, width: double.maxFinite,),
+                child: Image.network(widget.item.picUrl??'', fit: BoxFit.scaleDown,
+                  height: double.maxFinite, width: double.maxFinite,),
               ),
             ),
             SizedBox(height: 25,),
@@ -39,7 +40,8 @@ class _ItemDescriptionPageState extends State<ItemDescriptionPage> {
                 constraints: BoxConstraints(
                     maxWidth:800
                 ),
-                child: Text(widget.item.name??'', textAlign: TextAlign.center, maxLines: 2, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13,),)),
+                child: Text(widget.item.name??'', textAlign: TextAlign.center, maxLines: 2,
+                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13,),)),
             SizedBox(height: 25,),
             Container(
                 width: MediaQuery.of(context).size.width * 0.7,

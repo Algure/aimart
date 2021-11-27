@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 
-Future<void> main() async {runApp(const MyApp());
+Future<void> main() async {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
