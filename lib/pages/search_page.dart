@@ -65,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         SizedBox(width: 20,),
-                        // Text('AiMart', style: TextStyle(color: THEME_COLOR, fontWeight: FontWeight.bold ,fontSize: 18),),
+                        Text('Select image to search with.', style: TextStyle(color: THEME_COLOR, fontWeight: FontWeight.bold ,fontSize: 15),),
                         Spacer(),
                         GestureDetector(
                             onTap: resetMartList,
